@@ -30,7 +30,6 @@
 #define D1 5
 #define D2 4
 
-
 #define DHTPIN 0     // what digital pin the DHT22 is conected to
 #define DHTTYPE DHT22   // there are multiple kinds of DHT sensors
 
@@ -38,14 +37,29 @@ DHT dht(DHTPIN, DHTTYPE);
 
 SH1106 display(0x3c, D1, D2);
 
+//const char* ssid     = "your-ssid";
+//const char* password = "your-password";
+#include "password.h"  //put your password and ssid on lib/something/password.h and 
+                       // *DON'T* commit the file
+
 void setup() {
   Serial.begin(9600);
   delay(5000);
   Serial.println();
   Serial.println();
   Serial.print("setup begin\r\n");
-
-
+  Serial.print(ssid);
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
   // Initialising the UI will init the display too.
   display.init();
 
@@ -64,26 +78,6 @@ int timeSinceLastRead = 0;
 void loop() {
   // clear the display
   display.clear();
-/*
-  display.setTextAlignment(TEXT_ALIGN_LEFT);
-  display.setFont(ArialMT_Plain_10);
-  display.drawString(0, 0, "Te amo");
-  display.setFont(ArialMT_Plain_16);
-  display.drawString(0, 10, "un megabyte");
-  display.setFont(ArialMT_Plain_24);
-  display.drawString(0, 26, "besos <3");
-  display.display();
-  delay(2000);
-  display.clear();
-  display.setFont(ArialMT_Plain_10);
-  display.setTextAlignment(TEXT_ALIGN_LEFT);
-  display.drawStringMaxWidth(0, 0, 128,
-    "Te dejo este bichito para que no me olvides." );
-  display.display();
-  delay(2000);
-  display.clear();
-  delay(10);
-*/
     // Report every 2 seconds.
   if(timeSinceLastRead > 3000) {
     // Reading temperature or humidity takes about 250 milliseconds!
@@ -94,6 +88,10 @@ void loop() {
     // Check if any reads failed and exit early (to try again).
     if (isnan(h) || isnan(t)) {
       Serial.println("Failed to read from DHT sensor!");
+      display.setFont(ArialMT_Plain_16);
+      display.drawString(0, 0, "Failed to read\r\nfrom DHT sensor!");
+      display.display();
+      
       timeSinceLastRead = 0;
       return;
     }
