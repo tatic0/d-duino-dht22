@@ -1,0 +1,5 @@
+magic comes from arduinoframework
+pio run -e lolin32 //the very first time!
+or 
+pio run --target clean
+pio run -e lolin32

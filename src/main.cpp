@@ -67,8 +67,12 @@ void setup() {
   display.setFont(ArialMT_Plain_10);
   display.drawString(0, 0, "init...");
   display.display();
-  delay(4000);
+  delay(2000);
   display.clear();
+  String wfip = String(WiFi.localIP());
+  //display.drawString(0, 0, String(WiFi.localIP()));
+  display.drawString(0, 0, wfip);
+  display.display();
   Serial.print("setup done :)\r\n");
 
 }
